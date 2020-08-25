@@ -1,0 +1,61 @@
+[
+  {
+    "title": "danxuan",
+    "number": 1,
+    "replyType": 1,
+    "options": [
+      {
+        "content": "asd"
+      },
+      {
+        "content": "ayanghah"
+      }
+    ]
+  },
+  {
+    "title": "duoxuan",
+    "number": 2,
+    "replyType": 2,
+    "maxChoose": 2,
+    "options": [
+      {
+        "content": "uanxiang1"
+      },
+      {
+        "content": "xuanxiang2"
+      },
+      {
+        "content": "xuanxiang3"
+      },
+      {
+        "content": "xuanxiang4"
+      }
+    ]
+  },
+  {
+    "title": "wenbentiankong",
+    "number": 3,
+    "replyType": 3,
+    "options": [
+      {
+        "content": "how many sheeps?"
+      },
+      {
+        "content": "how much will it pay?"
+      }
+    ]
+  },
+  {
+    "title": "wenbentiankong",
+    "number": 4,
+    "replyType": 4,
+    "options": [
+      {
+        "content": "your favorite star?"
+      },
+      {
+        "content": "your favorite teacher"
+      }
+    ]
+  }
+]

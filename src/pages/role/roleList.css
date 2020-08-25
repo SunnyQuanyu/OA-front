@@ -1,0 +1,15 @@
+.myCard {
+  width: 480px;
+  margin: 10px 0;
+}
+.cardsWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.myButton{
+  margin: 0 auto 10px 0;
+}
+.myTag {
+  margin: 10px;
+}

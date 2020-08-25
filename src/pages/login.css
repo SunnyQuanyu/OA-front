@@ -1,0 +1,15 @@
+.form {
+  width: 480px;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+}
+#root {
+  background-color: rgba(250, 173, 20, 0.2);
+}
+@media screen and (max-width: 768px) {
+  .form {
+    width: 100%;
+  }
+}

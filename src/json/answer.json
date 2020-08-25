@@ -1,0 +1,20 @@
+[
+  {
+    "questionId": 1,
+    "questionOptionId": 1
+  },
+  {
+    "questionId": 2,
+    "questionOptionId": 3
+  },
+  {
+    "questionId": 3,
+    "questionOptionId": 7,
+    "score": 10
+  },
+  {
+    "questionId": 3,
+    "questionOptionId": 8,
+    "score": 20
+  }
+]

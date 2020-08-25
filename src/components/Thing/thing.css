@@ -1,0 +1,14 @@
+.boldFont {
+  font-weight: bold;
+}
+
+.infoRow {
+  margin: 8px 0;
+}
+
+.require::before {
+  content: '*';
+  color: red;
+  position: absolute;
+  left: -8px;
+}
