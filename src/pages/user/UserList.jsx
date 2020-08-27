@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
 
 import UserSearchResult from '../../components/UserSearchResult';
-import { Button, Popconfirm, Space, Modal, Input, Form, Row, Col } from 'antd';
+import { Button, Popconfirm, Space, Modal, Input, Form, Row, Col, message, Table, Card, Radio } from 'antd';
 import http from '../../utils/axios';
 
 
 const UserList = props => {
   const [form] = Form.useForm();
+
+  const [pageCurrent, setPageCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [pageTotal, setPageTotal] = useState(0);
+  const [queryData, setQueryData] = useState({});
+  const [pageData, setPageData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showUpdateUserModal, setShowUpdateUserModal] = useState(false);
   const [updateUserPassWord, setUpdateUserPassWord] = useState('');
+  const [updateUserPassWord1, setUpdateUserPassWord1] = useState('');
   const [userInfo, setUserInfo] = useState({});
   const [updateRecord, setUpdateRecord] = useState({});
   const [uid, setUid] = useState(0);
 
   useEffect(() => {
-  
+    getPageData(pageCurrent, pageSize, queryData);
   }, []);
 
   const handleDelete = id => {
@@ -37,6 +46,33 @@ const UserList = props => {
    
   };
 
+  const identityOptions = [
+    { name: '学生', value: 0 },
+    { name: '老师', value: 1 },
+    { name: '院长', value: 2 }
+  ];
+  const onFinish = values => {
+    setPageCurrent(1);
+    setPageSize(10);
+    setQueryData(values);
+    getPageData(1, 10, values);
+  };
+
+  const queryList = [
+    { name: 'number', label: '学号/工号' },
+    { name: 'realName', label: '姓名' },
+    { name: 'collegeName', label: '学院' },
+    { name: 'majorName', label: '专业' },
+    { name: 'className', label: '班级' }
+  ];
+
+  const onValuesChange = (changedValues, allValues) => {
+    console.log(changedValues);
+    console.log(allValues);
+    setUserInfo(allValues);
+    console.log(userInfo);
+  };
+
   const getUser = id => {
     http
         .post('/user/getUserMessage',{
@@ -44,10 +80,11 @@ const UserList = props => {
         })
         .then((res) => {
           console.log(res);
+      //    console.log(userInfo);
           if (res.data.code === 0) {
           //  setPageCurrent(1)
           //  getCreatedThings(pageCurrent,pageSize,dataSave);
-          setUserInfo(res.data.data);
+        //  setUserInfo(res.data.data);
           }
         })
         .catch((err) => {
@@ -55,21 +92,95 @@ const UserList = props => {
         });
   };
 
-  const handleOk = e => {
+
+  const getPageData = (current, size, queryData) => {
+    setLoading(true);
     http
+      .post('/user/getUsers', {
+        pageCurrent: current,
+        pageSize: size,
+        data: queryData
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          setPageData(res.data.data.records);
+          setPageTotal(res.data.data.total);
+          setLoading(false);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const handleOk = e => {
+    setLoading(true);
+    if(updateUserPassWord != updateUserPassWord1){
+      message.warning("两次输入的密码不一致哦！");
+      setLoading(false);
+    }else{
+      if(updateUserPassWord == ""){
+    http
+      .post('/user/update', {
+        id: uid,
+        password: updateRecord.password
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          message.warning("密码输入为空！");
+          setLoading(false);
+          setPageCurrent(1);
+          getPageData(pageCurrent, pageSize, queryData);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }else{
+      http
       .post('/user/update', {
         id: uid,
         password: updateUserPassWord
       })
       .then(res => {
         if (res.data.code === 0) {
-         // getCreatedTeams(pageCurrent, pageSize, dataSave);
+          message.warning("密码修改成功！");
+          setLoading(false);
+          setPageCurrent(1);
+          getPageData(pageCurrent, pageSize, queryData);
         }
       })
       .catch(err => {
         console.log(err);
       });
+    }
+    }
     setShowUpdateModal(false);
+  };
+
+  const handleOk1 = e => {
+    setLoading(true);
+    http
+      .post('/user/update', {
+        id: uid,
+        realName:userInfo.realName,
+        number:userInfo.number,
+        collegeName:userInfo.collegeName,
+        majorName:userInfo.majorName,
+        className:userInfo.className,
+        phone:userInfo.phone
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          setLoading(false);
+          setPageCurrent(1);
+          getPageData(pageCurrent, pageSize, queryData);
+
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
     setShowUpdateUserModal(false);
   };
 
@@ -79,7 +190,14 @@ const UserList = props => {
   };
 
 
-  const columns = [
+
+  const userColomns = [
+    { title: '学号/工号', dataIndex: 'number' },
+    { title: '姓名', dataIndex: 'realName' },
+    { title: '学院', dataIndex: 'collegeName' },
+    { title: '专业', dataIndex: 'majorName' },
+    { title: '班级', dataIndex: 'className' },
+    { title: '身份', dataIndex: 'identity', render: text => text === 0 ? '学生' : text === 1 ? '老师' : '院长' },
     {
       title: '操作',
       render: (txt, record, index) => {
@@ -92,7 +210,7 @@ const UserList = props => {
               onClick={() => {
                 props.history.push(`/user/edit/${record.id}`);
               }}>
-              修改用户角色
+              增删角色
             </Button>
             <Button
             //  type='primary'
@@ -102,9 +220,9 @@ const UserList = props => {
                 setUpdateRecord(record);
                 setUid(record.id);
                 getUser(record.id);
-                console.log(userInfo);
+         //       console.log(userInfo);
               }}>
-              修改用户密码
+              修改密码
             </Button>
             <Button
             //  type='primary'
@@ -116,7 +234,7 @@ const UserList = props => {
                 getUser(record.id);
               //  console.log(userInfo);
               }}>
-              修改用户信息
+              修改信息
             </Button>
             <Popconfirm title="确定要删除吗?" 
             onConfirm={() =>{ 
@@ -130,26 +248,38 @@ const UserList = props => {
         );
       }
     }
-  ];
+  ]
 
   return(
     <div>
 
       <Modal
-        title='修改用户密码：'
+      destroyOnClose
+        title='修改密码：'
         visible={showUpdateModal}
         onOk={handleOk}
         onCancel={handleCancel}>
-        <Input
-          value={updateRecord.password}
-          onChange={e => setUpdateUserPassWord(e.target.value)}
+        <h6>新密码：</h6>
+        <Input.Password 
+        placeholder="输入密码" 
+        onChange={e =>{
+          if(e.target.value != null){
+           setUpdateUserPassWord(e.target.value)
+          }
+          }}
         />
+        <h6>确认新密码：</h6>
+        <Input.Password
+      placeholder="再次确认密码"
+     onChange={e => setUpdateUserPassWord1(e.target.value)}
+    />
       </Modal>
 
       <Modal
-        title='修改用户信息：'
+      destroyOnClose
+        title='修改信息：'
         visible={showUpdateUserModal}
-        onOk={handleOk}
+        onOk={handleOk1}
         onCancel={handleCancel}>
 
 <Form
@@ -157,90 +287,140 @@ const UserList = props => {
           name='advanced_search'
           
           className='ant-advanced-search-form'
-         // onFinish = {onFinish}
-          >
+          initialValues ={{
+            realName:updateRecord.realName,
+            number:updateRecord.number,
+            collegeName:updateRecord.collegeName,
+            majorName:updateRecord.majorName,
+            className:updateRecord.className,
+            phone:updateRecord.phone,
+            
+          }}
+          onValuesChange={onValuesChange}
+>
+  
           <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="realName" label="姓名">
-                    <Input 
-                    placeholder={updateRecord.realName} 
-                    />
+                    <Input />
                   </Form.Item>
                 </Col>
                 </Row>
            <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="number" label="学号">
-                    <Input 
-                    placeholder={updateRecord.number} 
-                    />
+                    <Input/>
                   </Form.Item>
                 </Col>
            </Row>
            <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="collegeName" label="学院">
-                    <Input 
-                    placeholder={updateRecord.collegeName} 
-                    />
+                    <Input />
                   </Form.Item>
                 </Col>
                 </Row>
            <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="majorName" label="专业">
-                    <Input 
-                    placeholder={updateRecord.majorName} 
-                    />
+                    <Input/>
                   </Form.Item>
                 </Col>
                 </Row>
           <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="className" label="班级">
-                    <Input 
-                    placeholder={updateRecord.className} 
-                    />
+                    <Input />
                   </Form.Item>
                 </Col>
                 </Row>
           <Row gutter={24}>
-                <Col span={8}>
+                <Col span={20}>
                   <Form.Item name="phone" label="手机号">
-                    <Input 
-                    placeholder={updateRecord.phone} 
-                    />
+                    <Input />
                   </Form.Item>
                 </Col>
          </Row>
-         <Row>
-          <Form.Item>
+        </Form>
+      </Modal>
+
+    {/*<UserSearchResult extraColumns={columns} tableSelectable={false} />*/}
+
+    <Card>
+        <Form
+          form={form}
+          name='advanced_search'
+          onFinish={onFinish}
+          className='ant-advanced-search-form'>
+          <Row gutter={24}>
+            {queryList.map(query => {
+              return (
+                <Col span={8} key={query.name}>
+                  <Form.Item name={query.name} label={query.label}>
+                    <Input placeholder={query.label} />
+                  </Form.Item>
+                </Col>
+              );
+            })}
+            <Col span={8}>
+              <Form.Item name='identity' label='身份'>
+                <Radio.Group>
+                  {identityOptions.map(option => {
+                    return (
+                      <Radio value={option.value} key={option.value}>
+                        {option.name}
+                      </Radio>
+                    );
+                  })}
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
             <Col
               span={24}
               style={{
                 textAlign: 'right'
               }}>
               <Button 
-              //  type='primary' 
-                htmlType='submit'                
-                >
-                保存
+              //type='primary' 
+              htmlType='submit'>
+                查询
               </Button>
               <Button
                 style={{ margin: '0 8px' }}
                 onClick={() => {
                   form.resetFields();
-            
                 }}>
                 重置
               </Button>
             </Col>
-            </Form.Item>
           </Row>
         </Form>
-      </Modal>
-
-    <UserSearchResult extraColumns={columns} tableSelectable={false} />
+      </Card>
+      <Card>
+    <Table
+          loading={loading}
+          pagination={{
+            current: pageCurrent,
+            pageSize: pageSize,
+            total: pageTotal,
+            showTotal: (total, range) =>
+              ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
+            onChange: (page, size) => {
+              setPageCurrent(page);
+              getPageData(page, size, queryData);
+            },
+            onShowSizeChange: (current, size) => {
+              setPageCurrent(1);
+              setPageSize(size);
+              getPageData(current, size, queryData);
+            }
+          }}
+          columns={userColomns}
+          dataSource={pageData}
+        />
+        </Card>
     </div>
     );
 };

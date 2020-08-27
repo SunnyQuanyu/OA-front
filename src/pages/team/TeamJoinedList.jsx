@@ -48,7 +48,7 @@ const TeamJoinedList = props => {
     console.log(value)
   setDataSave(value);
   getJoinedTeams(1, 10, value);
-  
+
   };
 
 
@@ -95,14 +95,14 @@ const TeamJoinedList = props => {
           onFinish = {onFinish}
           >
           <Row gutter={24}>
-                <Col span={10}>
+          <Space size = "large">
+                
                   <Form.Item name="teamName" label="组名">
                     <Input 
                     placeholder="小组名字" 
                     />
                   </Form.Item>
-                </Col>
-                 <Col span={6}>
+                
                  <Form.Item name="publicState" label="是否私有">
                   <Select
                             style={{
@@ -111,12 +111,11 @@ const TeamJoinedList = props => {
                             }}
                           
                           >
-                            <Option value="1">是</Option>
-                            <Option value="0">否</Option>
+                            <Option value="0">是</Option>
+                            <Option value="1">否</Option>
                         </Select>
                  </Form.Item>
-                 </Col>   
-          <Col span={6}>
+                
                  <Form.Item name="createTime" label="创建时间" >
                     <DatePicker 
                     showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
@@ -124,7 +123,8 @@ const TeamJoinedList = props => {
                   
                     />
                  </Form.Item>
-                 </Col>
+                 
+                 </Space>
           </Row>
           <Row>
           <Form.Item>

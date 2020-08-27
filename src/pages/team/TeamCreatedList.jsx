@@ -170,15 +170,16 @@ const TeamCreatedList = props => {
           className='ant-advanced-search-form'
           onFinish = {onFinish}
           >
-          <Row gutter={24}>
-                <Col span={8}>
+          <Row>
+            <Space size = "large">
+            
                   <Form.Item name="teamName" label="组名">
                     <Input 
                     placeholder="小组名字" 
                     />
                   </Form.Item>
-                </Col>
-                 <Col span={8}>
+            
+
                  <Form.Item name="publicState" label="是否私有">
                   <Select
                             style={{
@@ -191,8 +192,8 @@ const TeamCreatedList = props => {
                             <Option value="0">是</Option>
                         </Select>
                  </Form.Item>
-                 </Col>   
-          <Col span={8}>
+          
+          
                  <Form.Item name="createTime" label="创建时间" >
                     <DatePicker 
                     showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
@@ -200,7 +201,8 @@ const TeamCreatedList = props => {
                   
                     />
                  </Form.Item>
-                 </Col>
+               
+           </Space>  
           </Row>
           <Row>
           <Form.Item>
