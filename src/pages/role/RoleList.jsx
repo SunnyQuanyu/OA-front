@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import http from "../../utils/axios";
-import { Card, Tag, Button, Modal, Input, message } from "antd";
+import { Card, Tag, Button, Modal, Input, message, Popconfirm } from "antd";
 import style from "./roleList.css";
 
 const RoleList = props => {
@@ -39,6 +39,21 @@ const RoleList = props => {
       });
   };
 
+  const handleDelete = id => {
+    http
+        .post('/role/deleteRole',{
+         id : id,
+        })
+        .then((res) => {
+          console.log(res);
+          if (res.data.data === 1) {
+            getRoles();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });  
+  };
   return (
     <div>
       <Button
@@ -56,6 +71,7 @@ const RoleList = props => {
               title={role.roleName}
               className={style.myCard}
               extra={
+                <div>
                 <Button
                   type='link'
                   onClick={() => {
@@ -63,6 +79,14 @@ const RoleList = props => {
                   }}>
                   管理
                 </Button>
+                <Popconfirm title="确定要删除吗?" 
+              onConfirm={() =>{ 
+                handleDelete(role.id);
+              }}
+              >
+               <Button type='link' size='small'>删除</Button>
+              </Popconfirm>
+                </div>
               }
               hoverable
               bordered={false}>

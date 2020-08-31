@@ -3,6 +3,7 @@ import PageNotFound from './pages/PageNotFound';
 import UserAdd from './pages/user/UserAdd';
 import PersonalInfo from './pages/personal/PersonalInfo';
 import RoleList from './pages/role/RoleList';
+import PermissionList from './pages/role/PermissionList';
 import Role from './pages/role/Role';
 import UserList from './pages/user/UserList';
 import TeamEdit from './pages/team/TeamEdit';
@@ -145,6 +146,14 @@ export const roleRoutes = [
     isShow: true,
     controlled: true,
     title: '角色管理',
+  },
+  {
+    path: '/sys/permission',
+    component: PermissionList,
+    exact: true,
+    isShow: true,
+    controlled: true,
+    title: '权限管理',
   },
   {
     path: '/sys/role/:id',

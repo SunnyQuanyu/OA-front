@@ -23,6 +23,12 @@ const UserList = props => {
   const [updateRecord, setUpdateRecord] = useState({});
   const [uid, setUid] = useState(0);
 
+  const [updateUserRealName, setUpdateUserRealName] = useState('');
+  const [updateUserNumber, setUpdateUserNumber] = useState('');
+  const [updateUserCollegeName, setUpdateUserCollegeName] = useState('');
+  const [updateUserMajorName, setUpdateUserMajorName] = useState('');
+  const [updateUserClassName, setUpdateUserClassName] = useState('');
+  const [updateUserPhone, setUpdateUserPhone] = useState('');
   useEffect(() => {
     getPageData(pageCurrent, pageSize, queryData);
   }, []);
@@ -163,12 +169,12 @@ const UserList = props => {
     http
       .post('/user/update', {
         id: uid,
-        realName:userInfo.realName,
-        number:userInfo.number,
-        collegeName:userInfo.collegeName,
-        majorName:userInfo.majorName,
-        className:userInfo.className,
-        phone:userInfo.phone
+        realName:updateUserRealName==""?updateRecord.realName:updateUserRealName,
+        number:updateUserNumber==""?updateRecord.number:updateUserNumber,
+        collegeName:updateUserCollegeName==""?updateRecord.collegeName:updateUserCollegeName,
+        majorName:updateUserMajorName==""?updateRecord.majorName:updateUserMajorName,
+        className:updateUserClassName==""?updateRecord.className:updateUserClassName,
+        phone:updateUserPhone==""?updateRecord.phone:updateUserPhone
       })
       .then(res => {
         if (res.data.code === 0) {
@@ -259,7 +265,7 @@ const UserList = props => {
         visible={showUpdateModal}
         onOk={handleOk}
         onCancel={handleCancel}>
-        <h6>新密码：</h6>
+        <h5>新密码：</h5>
         <Input.Password 
         placeholder="输入密码" 
         onChange={e =>{
@@ -268,7 +274,7 @@ const UserList = props => {
           }
           }}
         />
-        <h6>确认新密码：</h6>
+        <h5>确认新密码：</h5>
         <Input.Password
       placeholder="再次确认密码"
      onChange={e => setUpdateUserPassWord1(e.target.value)}
@@ -287,57 +293,65 @@ const UserList = props => {
           name='advanced_search'
           
           className='ant-advanced-search-form'
-          initialValues ={{
-            realName:updateRecord.realName,
-            number:updateRecord.number,
-            collegeName:updateRecord.collegeName,
-            majorName:updateRecord.majorName,
-            className:updateRecord.className,
-            phone:updateRecord.phone,
-            
-          }}
-          onValuesChange={onValuesChange}
 >
   
           <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="realName" label="姓名">
-                    <Input />
+                  <Form.Item name="realName1" label="姓名">
+                    <Input 
+                    defaultValue={updateRecord.realName}
+                    onChange={e => setUpdateUserRealName(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
                 </Row>
            <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="number" label="学号">
-                    <Input/>
+                  <Form.Item name="number1" label="学号">
+                    <Input
+                    defaultValue={updateRecord.number}
+                    onChange={e => setUpdateUserNumber(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
            </Row>
            <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="collegeName" label="学院">
-                    <Input />
+                  <Form.Item name="collegeName1" label="学院">
+                    <Input 
+                    defaultValue={updateRecord.collegeName}
+                    onChange={e => setUpdateUserCollegeName(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
                 </Row>
            <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="majorName" label="专业">
-                    <Input/>
+                  <Form.Item name="majorName1" label="专业">
+                    <Input
+                    defaultValue={updateRecord.majorName}
+                    onChange={e => setUpdateUserMajorName(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
                 </Row>
           <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="className" label="班级">
-                    <Input />
+                  <Form.Item name="className1" label="班级">
+                    <Input 
+                    defaultValue={updateRecord.className}
+                    onChange={e => setUpdateUserClassName(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
                 </Row>
           <Row gutter={24}>
                 <Col span={20}>
-                  <Form.Item name="phone" label="手机号">
-                    <Input />
+                  <Form.Item name="phone1" label="手机号">
+                    <Input 
+                    defaultValue={updateRecord.phone}
+                    onChange={e => setUpdateUserPhone(e.target.value)}
+                    />
                   </Form.Item>
                 </Col>
          </Row>

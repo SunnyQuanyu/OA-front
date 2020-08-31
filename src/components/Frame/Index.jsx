@@ -33,6 +33,7 @@ function Index(props) {
   useEffect(() => {
     let userPermissionUrlSet = [];
     let permissionSet = [...props.userInfo.info.permissionSet];
+    console.log(permissionSet);
     permissionSet.forEach((permission) => {
       userPermissionUrlSet.push(permission.frontRoute);
     });
@@ -235,7 +236,10 @@ function Index(props) {
                   </span>
                 }>
                 {roleRoutes.map((route) => {
+                  console.log(route);
+                  console.log(roleRoutes);
                   return (
+                    
                     <Menu.Item
                       key={route.path}
                       onClick={(p) => props.history.push(p.key)}>

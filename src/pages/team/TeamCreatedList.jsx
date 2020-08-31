@@ -87,9 +87,7 @@ const TeamCreatedList = props => {
         })
         .catch((err) => {
           console.log(err);
-        });
-    
-   
+        });  
   };
 
 //  console.log(teams);
