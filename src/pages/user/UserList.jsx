@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 import UserSearchResult from '../../components/UserSearchResult';
-import { Button, Popconfirm, Space, Modal, Input, Form, Row, Col, message, Table, Card, Radio } from 'antd';
+import { Button, Popconfirm, Space, Modal, Input, Form, Row, Col, message, Table, Card, Radio, Tag, TreeSelect } from 'antd';
 import http from '../../utils/axios';
 
+const { CheckableTag } = Tag;
 
 const UserList = props => {
   const [form] = Form.useForm();
@@ -17,11 +18,15 @@ const UserList = props => {
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showUpdateUserModal, setShowUpdateUserModal] = useState(false);
+  const [ifShowModal, setIfShowModal] = useState(false);
   const [updateUserPassWord, setUpdateUserPassWord] = useState('');
   const [updateUserPassWord1, setUpdateUserPassWord1] = useState('');
-  const [userInfo, setUserInfo] = useState({});
+  const [roleMessage, setRoleMessage] = useState({});
+  const [selecedRole, setSelecedRole] = useState({});
   const [updateRecord, setUpdateRecord] = useState({});
   const [uid, setUid] = useState(0);
+  const [addUserIDs, setAddUserIDs] = useState([]);
+  const [addRoleIDs, setAddRoleIDs] = useState([]);
 
   const [updateUserRealName, setUpdateUserRealName] = useState('');
   const [updateUserNumber, setUpdateUserNumber] = useState('');
@@ -29,8 +34,11 @@ const UserList = props => {
   const [updateUserMajorName, setUpdateUserMajorName] = useState('');
   const [updateUserClassName, setUpdateUserClassName] = useState('');
   const [updateUserPhone, setUpdateUserPhone] = useState('');
+  const [updateUserEmail, setUpdateUserEmail] = useState('');
+  
   useEffect(() => {
     getPageData(pageCurrent, pageSize, queryData);
+    getRoles();
   }, []);
 
   const handleDelete = id => {
@@ -72,12 +80,6 @@ const UserList = props => {
     { name: 'className', label: '班级' }
   ];
 
-  const onValuesChange = (changedValues, allValues) => {
-    console.log(changedValues);
-    console.log(allValues);
-    setUserInfo(allValues);
-    console.log(userInfo);
-  };
 
   const getUser = id => {
     http
@@ -117,6 +119,35 @@ const UserList = props => {
       .catch(err => {
         console.log(err);
       });
+  };
+
+  const getRoles = () => {
+     http.post('/role/getRoles', {
+      
+    })
+     .then(res => {
+      if (res.data.code === 0) {
+        let list = res.data.data.map(item =>{
+          item.key = item.id;
+          item.value = item.id;
+          item.title = item.roleName;
+          return item
+        })
+        setRoleMessage(list);
+        console.log(res.data.data);
+        console.log(list);
+     //   console.log(list.value);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  };
+
+  const onChange = (value, label, extra) => {
+  setAddRoleIDs((value||[]).map(item=>{return item.value}));
+  console.log((value||[]).map(item=>{return item.value}));
+    console.log(label)
   };
 
   const handleOk = e => {
@@ -174,7 +205,8 @@ const UserList = props => {
         collegeName:updateUserCollegeName==""?updateRecord.collegeName:updateUserCollegeName,
         majorName:updateUserMajorName==""?updateRecord.majorName:updateUserMajorName,
         className:updateUserClassName==""?updateRecord.className:updateUserClassName,
-        phone:updateUserPhone==""?updateRecord.phone:updateUserPhone
+        phone:updateUserPhone==""?updateRecord.phone:updateUserPhone,
+        email:updateUserEmail==""?updateRecord.email:updateUserEmail
       })
       .then(res => {
         if (res.data.code === 0) {
@@ -193,8 +225,25 @@ const UserList = props => {
   const handleCancel = e => {
     setShowUpdateModal(false);
     setShowUpdateUserModal(false);
+    setIfShowModal(false);
   };
 
+  const handleOk2 = () => {
+    http
+      .post('/role/addUsers', {
+        roleId: addRoleIDs,
+        userIdList: addUserIDs
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          message.success('批量添加角色成功！');
+          setIfShowModal(false);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
 
   const userColomns = [
@@ -355,9 +404,56 @@ const UserList = props => {
                   </Form.Item>
                 </Col>
          </Row>
+         <Row gutter={24}>
+                <Col span={20}>
+                  <Form.Item name="email1" label="邮箱">
+                    <Input 
+                    defaultValue={updateRecord.email}
+                    onChange={e => setUpdateUserEmail(e.target.value)}
+                    />
+                  </Form.Item>
+                </Col>
+         </Row>
         </Form>
       </Modal>
 
+      <Modal
+      destroyOnClose
+        title='批量设置用户角色：'
+        visible={ifShowModal}
+        onOk={handleOk2}
+        onCancel={handleCancel}
+        width='80%'
+        >
+        <Card>
+        <TreeSelect
+        treeCheckable
+        treeCheckStrictly
+        showSearch
+        style={{ width: '100%' }}
+      //  value={roleMessage.id||[]}
+        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        placeholder="请选择角色"
+        allowClear
+        multiple
+        treeDefaultExpandAll
+        treeData={roleMessage}
+        onChange={onChange}
+        
+      >
+      
+      </TreeSelect>
+
+
+        </Card>
+        <UserSearchResult
+         //extraColumns={columns} 
+         getSelectIds={ids => {
+          setAddUserIDs(ids);
+          console.log(ids);
+        }}
+         />
+      </Modal>
     {/*<UserSearchResult extraColumns={columns} tableSelectable={false} />*/}
 
     <Card>
@@ -412,7 +508,17 @@ const UserList = props => {
           </Row>
         </Form>
       </Card>
-      <Card>
+      <Card 
+          extra={
+          
+            <Button
+              onClick={() => {
+                 setIfShowModal(true);
+              }}>
+              批量设置用户角色
+            </Button>           
+          }
+      >
     <Table
           loading={loading}
           pagination={{

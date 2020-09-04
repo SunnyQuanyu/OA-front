@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, message, Spin } from 'antd';
+import { Form, Input, Button, Card, message, Spin, Checkbox, Modal, Row, Col } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import style from './login.css';
 import http from '../utils/axios';
 import { getToken, setToken } from '../utils/authc';
 
 class Login extends Component {
+  
   constructor(props) {
     super(props);
     this.state = { loading: false };
+    this.setState({checked : false});
+    this.setState({ifShowModal : false});
   }
 
   componentDidMount() {
@@ -57,18 +60,84 @@ class Login extends Component {
   onFinish = (values) => {
     this.login(values);
   };
+  onChange = e => {
+     console.log(`checked = ${e.target.checked}`);
+    //  checked = e.target.checked;
+      this.setState({checked : e.target.checked})
+  };
 
   saveUserInfoToDva = (value) => {
-    this.props.dispatch({
-      type: 'userInfo/save',
-      isLogined: true,
-      data: value,
-    });
+    if(this.state.checked == true){
+        this.props.dispatch({
+          type: 'userInfo/save',
+          isLogined: true,
+          data: value,
+        });
+    }
+  };
+
+ handleOk = e => {
+    http
+      .post('/user/update', {
+      //  id: userInfo.id,
+      //  phone:updateUserPhone==""?userInfo.phone:updateUserPhone,
+      //  email:updateUserEmail==""?userInfo.email:updateUserEmail
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          message.warning("发送成功！")
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+      this.setState({ifShowModal : false})
   };
 
   render() {
     return (
+    
+
+
+
       <Card title='管理后台登录' className={style.form}>
+        <Modal
+    destroyOnClose
+      title='发送邮件'
+      okText='发送'
+      visible={this.state.ifShowModal}
+      onOk={this.handleOk}
+      onCancel={() => this.setState({ifShowModal : false})}
+      >
+
+     <Form
+        
+        name='advanced_search'        
+        className='ant-advanced-search-form'
+>
+
+        <Row gutter={24}>
+              <Col span={20}>
+                <Form.Item name="number" label="学号">
+                  <Input 
+                //  defaultValue={userInfo.phone}
+                //  onChange={e => setUpdateUserPhone(e.target.value)}
+                  />
+                </Form.Item>
+              </Col>
+       </Row>
+       <Row gutter={24}>
+              <Col span={20}>
+                <Form.Item name="email" label="邮箱">
+                  <Input 
+                //  defaultValue={userInfo.email}
+                 // onChange={e => setUpdateUserEmail(e.target.value)}
+                  />
+                </Form.Item>
+              </Col>
+       </Row>
+      </Form>
+    </Modal>
         <Spin spinning={this.state.loading}>
           <Form
             name='normal_login'
@@ -92,7 +161,13 @@ class Login extends Component {
                 placeholder='密码'
               />
             </Form.Item>
-
+            <Form.Item>
+            <Checkbox 
+            onChange={this.onChange}
+            >
+            记住密码
+            </Checkbox>
+            </Form.Item>
             <Form.Item>
               <Button
                 type='primary'
@@ -100,10 +175,19 @@ class Login extends Component {
                 className='login-form-button'>
                 登录
               </Button>
+              <Button
+                    type='link'
+                    onClick={() => {
+                      this.setState({ifShowModal : true});
+                    }}
+              >
+                忘记密码
+              </Button>
             </Form.Item>
           </Form>
         </Spin>
       </Card>
+      
     );
   }
 }
