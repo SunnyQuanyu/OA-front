@@ -46,6 +46,14 @@ const PersonalInfo = ({ dispatch }) => {
       setIfShowModal(false)
   };
 
+  const layout = {
+    labelCol: {
+      span: 4,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
   return (
     <div>
     <Modal
@@ -60,28 +68,25 @@ const PersonalInfo = ({ dispatch }) => {
         
         name='advanced_search'        
         className='ant-advanced-search-form'
+        {...layout}
 >
 
-        <Row gutter={24}>
-              <Col span={20}>
+        
                 <Form.Item name="phone1" label="手机号">
                   <Input 
                   defaultValue={userInfo.phone}
                   onChange={e => setUpdateUserPhone(e.target.value)}
                   />
                 </Form.Item>
-              </Col>
-       </Row>
-       <Row gutter={24}>
-              <Col span={20}>
+         
+    
                 <Form.Item name="email1" label="邮箱">
                   <Input 
                   defaultValue={userInfo.email}
                   onChange={e => setUpdateUserEmail(e.target.value)}
                   />
                 </Form.Item>
-              </Col>
-       </Row>
+         
       </Form>
     </Modal>
 
@@ -122,6 +127,10 @@ const PersonalInfo = ({ dispatch }) => {
         {userInfo.phone && (
           <Descriptions.Item label='手机号'>{userInfo.phone}</Descriptions.Item>
         )}
+        {userInfo.email && (
+          <Descriptions.Item label='邮箱'>{userInfo.email}</Descriptions.Item>
+        )}
+
         {userInfo.roleList && (
           <Descriptions.Item label='角色'>
             {userInfo.roleList.map((role) => {
@@ -133,6 +142,7 @@ const PersonalInfo = ({ dispatch }) => {
             })}
           </Descriptions.Item>
         )}
+        
         {userInfo.permissionSet && (
           <Descriptions.Item label='权限'>
             {userInfo.permissionSet.map((permission) => {
@@ -147,6 +157,7 @@ const PersonalInfo = ({ dispatch }) => {
             })}
           </Descriptions.Item>
         )}
+        
       </Descriptions>
     </Card>
     </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Form, Input, Button, Card, message, Spin, Checkbox, Modal, Row, Col } from 'antd';
+import { Form, Input, Button, Card, message, Spin, Checkbox, Modal, Row, Col, Tooltip } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import style from './login.css';
 import http from '../utils/axios';
@@ -77,21 +77,63 @@ class Login extends Component {
   };
 
  handleOk = e => {
+  if(this.state.checkCode != this.state.backCheckCode){
+    message.warning("验证码输入有误！")
+  }else{
+    if(this.state.forgetNumber !="" && this.state.newPassWord !=""){
+  http
+  .post('/user/updatePassWaord', {
+    number:this.state.forgetNumber,
+    password:this.state.newPassWord
+  })
+  .then(res => {
+    if (res.data.code === 0) {
+      message.warning("密码更改成功！")
+    }
+  })
+  .catch(err => {
+    console.log(err);
+  });
+  this.setState({ifShowModal : false})
+}else{
+  message.warning("学号或密码为空")
+}
+ }
+  };
+
+  sendEmail = e => {
     http
-      .post('/user/update', {
-      //  id: userInfo.id,
-      //  phone:updateUserPhone==""?userInfo.phone:updateUserPhone,
-      //  email:updateUserEmail==""?userInfo.email:updateUserEmail
+      .post('/user/sendEmail', {
+       data: this.state.email
       })
       .then(res => {
         if (res.data.code === 0) {
-          message.warning("发送成功！")
+          message.warning("发送成功！");
+          this.setState({backCheckCode : res.data.data})
         }
       })
       .catch(err => {
         console.log(err);
       });
-      this.setState({ifShowModal : false})
+      
+  };
+
+
+
+  layout = {
+    labelCol: {
+      span: 4,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+
+   tailLayout = {
+    wrapperCol: {
+    //  offset: 1,
+      span: 16,
+    },
   };
 
   render() {
@@ -103,8 +145,7 @@ class Login extends Component {
       <Card title='管理后台登录' className={style.form}>
         <Modal
     destroyOnClose
-      title='发送邮件'
-      okText='发送'
+      title='设置新密码'
       visible={this.state.ifShowModal}
       onOk={this.handleOk}
       onCancel={() => this.setState({ifShowModal : false})}
@@ -114,28 +155,49 @@ class Login extends Component {
         
         name='advanced_search'        
         className='ant-advanced-search-form'
+      //  layout='vertical'
+        {...this.layout}
 >
 
-        <Row gutter={24}>
-              <Col span={20}>
-                <Form.Item name="number" label="学号">
+       
+                <Form.Item name="forgetNumber" label="学号" >
                   <Input 
                 //  defaultValue={userInfo.phone}
-                //  onChange={e => setUpdateUserPhone(e.target.value)}
+                  onChange={e => this.setState({forgetNumber : e.target.value})}
                   />
                 </Form.Item>
-              </Col>
-       </Row>
-       <Row gutter={24}>
-              <Col span={20}>
-                <Form.Item name="email" label="邮箱">
+         
+                <Form.Item  label="邮箱">
+                <Form.Item name="email" noStyle>
+                  <Input 
+                  style={{ width: 190 }}
+                //  defaultValue={userInfo.email}
+                  onChange={e => this.setState({email : e.target.value})}
+                  />
+                  
+                </Form.Item>
+
+               
+                <Button style={{ margin: '0 8px' }}
+                onClick={() => this.sendEmail}
+                >发送验证码</Button>
+               
+                </Form.Item>
+
+                <Form.Item name="checkCode" label="验证码">
                   <Input 
                 //  defaultValue={userInfo.email}
-                 // onChange={e => setUpdateUserEmail(e.target.value)}
+                  onChange={e => this.setState({checkCode : e.target.value})}
                   />
                 </Form.Item>
-              </Col>
-       </Row>
+
+                <Form.Item name="newPassWord" label="新密码">
+                  <Input.Password 
+                //  defaultValue={userInfo.email}
+                  onChange={e => this.setState({newPassWord : e.target.value})}
+                  />
+                </Form.Item>
+          
       </Form>
     </Modal>
         <Spin spinning={this.state.loading}>

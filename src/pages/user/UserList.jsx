@@ -305,6 +305,15 @@ const UserList = props => {
     }
   ]
 
+  const layout = {
+    labelCol: {
+      span: 4,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+
   return(
     <div>
 
@@ -314,7 +323,12 @@ const UserList = props => {
         visible={showUpdateModal}
         onOk={handleOk}
         onCancel={handleCancel}>
-        <h5>新密码：</h5>
+          <Form     
+        name='advanced_search'        
+        className='ant-advanced-search-form'
+        {...layout}
+          >
+        <Form.Item name="newPassWord" label="输入新密码">
         <Input.Password 
         placeholder="输入密码" 
         onChange={e =>{
@@ -323,11 +337,14 @@ const UserList = props => {
           }
           }}
         />
-        <h5>确认新密码：</h5>
+        </Form.Item>
+        <Form.Item name="againNewPassWord" label="确认密码">
         <Input.Password
       placeholder="再次确认密码"
      onChange={e => setUpdateUserPassWord1(e.target.value)}
     />
+    </Form.Item>
+    </Form>
       </Modal>
 
       <Modal
@@ -340,80 +357,65 @@ const UserList = props => {
 <Form
           form={form}
           name='advanced_search'
-          
+          {...layout}
           className='ant-advanced-search-form'
 >
   
-          <Row gutter={24}>
-                <Col span={20}>
+          
                   <Form.Item name="realName1" label="姓名">
                     <Input 
                     defaultValue={updateRecord.realName}
                     onChange={e => setUpdateUserRealName(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-                </Row>
-           <Row gutter={24}>
-                <Col span={20}>
+               
                   <Form.Item name="number1" label="学号">
                     <Input
                     defaultValue={updateRecord.number}
                     onChange={e => setUpdateUserNumber(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-           </Row>
-           <Row gutter={24}>
-                <Col span={20}>
+                
+           
                   <Form.Item name="collegeName1" label="学院">
                     <Input 
                     defaultValue={updateRecord.collegeName}
                     onChange={e => setUpdateUserCollegeName(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-                </Row>
-           <Row gutter={24}>
-                <Col span={20}>
+                
+          
                   <Form.Item name="majorName1" label="专业">
                     <Input
                     defaultValue={updateRecord.majorName}
                     onChange={e => setUpdateUserMajorName(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-                </Row>
-          <Row gutter={24}>
-                <Col span={20}>
+                
+          
                   <Form.Item name="className1" label="班级">
                     <Input 
                     defaultValue={updateRecord.className}
                     onChange={e => setUpdateUserClassName(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-                </Row>
-          <Row gutter={24}>
-                <Col span={20}>
+                
+          
                   <Form.Item name="phone1" label="手机号">
                     <Input 
                     defaultValue={updateRecord.phone}
                     onChange={e => setUpdateUserPhone(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-         </Row>
-         <Row gutter={24}>
-                <Col span={20}>
+              
+       
                   <Form.Item name="email1" label="邮箱">
                     <Input 
                     defaultValue={updateRecord.email}
                     onChange={e => setUpdateUserEmail(e.target.value)}
                     />
                   </Form.Item>
-                </Col>
-         </Row>
+               
         </Form>
       </Modal>
 
