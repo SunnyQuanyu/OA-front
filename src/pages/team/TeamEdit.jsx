@@ -84,6 +84,9 @@ const TeamEdit = props => {
           getSelectIds={ids => {
             setAddUserIDs(ids);
           }}
+          getSelectRows={names =>{
+            console.log(names);
+          }}
         />
       </Card>
     </div>

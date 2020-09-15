@@ -248,6 +248,10 @@ const PermissionList = props => {
         </Button>
       </Card>
       <Table
+      pagination={{
+        showTotal: (total, range) =>
+      ` 共 ${total} 条，第 ${range[0]}-${range[1]} 条`,
+    }}
         columns={columns}
         dataSource={records}
         rowKey={record => record.id}

@@ -118,7 +118,8 @@ const TeamJoinedList = props => {
                 
                  <Form.Item name="createTime" label="创建时间" >
                     <DatePicker 
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
+                  //  showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
+                  defaultValue={ moment('00:00:00', 'HH:mm:ss') }
                     format="YYYY-MM-DD" 
                   
                     />

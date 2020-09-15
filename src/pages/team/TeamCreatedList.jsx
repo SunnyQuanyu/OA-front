@@ -16,6 +16,8 @@ const TeamCreatedList = props => {
   const [dataSave, setDataSave] = useState({});
   const [pageTotal, setPageTotal] = useState(0);
 
+  const [saveTime, setSaveTime] = useState('');
+
   useEffect(() => {
     getCreatedTeams(pageCurrent, pageSize, dataSave);
   }, []);
@@ -46,7 +48,9 @@ const TeamCreatedList = props => {
     
     setPageCurrent(1);
     setPageSize(10);
-    console.log(value)
+    console.log(value);
+  //  value.createTime = saveTime;
+    //console.log(value);
   setDataSave(value);
   getCreatedTeams(1, 10, value);
   };
@@ -89,6 +93,13 @@ const TeamCreatedList = props => {
           console.log(err);
         });  
   };
+
+/*  const onChange =(date, dateString)=> {
+    console.log(date, dateString);
+    var dateConvert1=new Date(Date.parse(dateString));
+    console.log(dateConvert1);
+    setSaveTime(dateString);
+  }*/
 
 //  console.log(teams);
   
@@ -193,11 +204,10 @@ const TeamCreatedList = props => {
           
           
                  <Form.Item name="createTime" label="创建时间" >
-                    <DatePicker 
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
-                    format="YYYY-MM-DD" 
-                  
-                    />
+                 <DatePicker 
+                // onChange={onChange}
+                defaultValue={ moment('00:00:00', 'HH:mm:ss') }
+                 />
                  </Form.Item>
                
            </Space>  

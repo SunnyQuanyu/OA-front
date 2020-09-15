@@ -7,7 +7,7 @@ export function getToken() {
     password = atob(password)
     return { number, password }
   }
-  return null;
+  return { number, password };
 }
 
 export function setToken({ number, password }) {

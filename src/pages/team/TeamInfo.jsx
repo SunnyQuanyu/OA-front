@@ -170,6 +170,9 @@ const TeamInfo = (props) => {
           getSelectIds={(ids) => {
             setAddUserIDs(ids);
           }}
+          getSelectRows={names =>{
+            console.log(names);
+          }}
         />
       </Modal>
     </div>

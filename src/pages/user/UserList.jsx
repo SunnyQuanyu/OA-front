@@ -454,6 +454,9 @@ const UserList = props => {
           setAddUserIDs(ids);
           console.log(ids);
         }}
+        getSelectRows={names =>{
+          console.log(names);
+        }}
          />
       </Modal>
     {/*<UserSearchResult extraColumns={columns} tableSelectable={false} />*/}

@@ -8,8 +8,9 @@ import {
   TagsOutlined,
   TeamOutlined,
   UserSwitchOutlined,
+  KeyOutlined,
 } from '@ant-design/icons';
-import { Avatar, Dropdown, Layout, Menu, message, Space } from 'antd';
+import { Avatar, Dropdown, Layout, Menu, message, Space, Input, Form, Modal } from 'antd';
 import { connect } from 'dva';
 import { withRouter } from 'dva/router';
 import React, { useEffect, useState } from 'react';
@@ -29,11 +30,16 @@ function Index(props) {
   const [tagRoutes, setTagRoutes] = useState([]);
   const [userOperateRoutes, setUserOperateRoutes] = useState([]);
   // const [testRoutes, setTestRoutes] = useState([]);
+  const [ifShowModal, setIfShowModal] = useState(false);
+  const [updateUserPassWord, setUpdateUserPassWord] = useState('');
+  const [updateUserPassWord1, setUpdateUserPassWord1] = useState('');
+  const [userOldPassWord, setUserOldPassWord] = useState('');
 
   useEffect(() => {
     let userPermissionUrlSet = [];
     let permissionSet = [...props.userInfo.info.permissionSet];
     console.log(permissionSet);
+    console.log(props.userInfo.info);
     permissionSet.forEach((permission) => {
       userPermissionUrlSet.push(permission.frontRoute);
     });
@@ -81,6 +87,60 @@ function Index(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const layout = {
+    labelCol: {
+      span: 4,
+    },
+    wrapperCol: {
+      span: 16,
+    },
+  };
+
+  const handleOk = e => {
+    if(userOldPassWord != props.userInfo.info.password){
+      message.warning("原密码输入有误！");
+    }else{
+      if(updateUserPassWord != updateUserPassWord1){
+        message.warning("两次输入的密码不一致哦！");
+      }else{
+          if(updateUserPassWord == ""){
+            message.warning("密码输入为空！");
+        }else{
+          http
+          .post('/user/update', {
+            id: props.userInfo.info.id,
+            password: updateUserPassWord
+          })
+          .then(res => {
+            if (res.data.code === 0) {
+              message.warning("密码修改成功，请重新登录");
+              http
+            .post('/user/logout')
+            .then((res) => {
+              if (res.data.code === 0) {
+                // 一定要先清除token
+                clearToken();
+                props.dispatch({
+                  type: 'userInfo/save',
+                  isLogined: false,
+                });
+                props.history.push('/login');
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
+      }
+  }
+    setIfShowModal(false);
+  };
+
   // 鼠标滑到右上角用户上时候的弹出菜单
   const popMenu = (
     <Menu
@@ -104,7 +164,9 @@ function Index(props) {
             });
         } else if (p.key === 'info') {
           props.history.push('/u/info');
-        } else {
+        } else if (p.key === 'update') {
+          setIfShowModal(true);
+        }else {
           message.info(p.key);
         }
       }}>
@@ -117,6 +179,10 @@ function Index(props) {
         <SettingOutlined />
         设置
       </Menu.Item>
+      <Menu.Item key='update'>
+      <KeyOutlined />
+        修改密码
+      </Menu.Item>
       <Menu.Item key='logOut'>
         <LogoutOutlined />
         退出
@@ -125,6 +191,50 @@ function Index(props) {
   );
 
   return (
+<div>
+    <Modal
+      destroyOnClose
+        title='修改密码：'
+        visible={ifShowModal}
+        onOk={handleOk}
+        onCancel={() => setIfShowModal(false)}
+      >
+          <Form     
+        name='advanced_search'        
+        className='ant-advanced-search-form'
+        {...layout}
+          >
+       <Form.Item name="oldPassWord" label="原密码">
+        <Input 
+      //  defaultValue={props.userInfo.info.password}
+      onChange={e =>{
+        if(e.target.value != null){
+          setUserOldPassWord(e.target.value)
+        }
+        }}
+        />
+        </Form.Item>
+        <Form.Item name="newPassWord" label="输入新密码">
+        <Input.Password 
+        placeholder="输入新密码" 
+        onChange={e =>{
+          if(e.target.value != null){
+           setUpdateUserPassWord(e.target.value)
+          }
+          }}
+        />
+        </Form.Item>
+        <Form.Item name="againNewPassWord" label="确认密码">
+        <Input.Password
+      placeholder="再次确认密码"
+     onChange={e =>
+       setUpdateUserPassWord1(e.target.value)
+    }
+    />
+    </Form.Item>
+    </Form>
+      </Modal>
+
     <Layout className={style.main}>
       <Header className={style.header}>
         <Space>
@@ -275,6 +385,7 @@ function Index(props) {
         </Layout>
       </Layout>
     </Layout>
+    </div>
   );
 }
 

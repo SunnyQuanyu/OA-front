@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Descriptions, Tag, Card, Divider, Typography, message } from 'antd';
 import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import http from '../../utils/axios.js';
+import BreadNav from '../../components/Frame/BreadNav';
 
 const { Text } = Typography;
 
@@ -90,6 +91,12 @@ const UserEdit = props => {
 
   return (
     <div>
+      <BreadNav
+        navs={[
+          { url: '/user/list', name: '用户列表' },
+          { url: props.location.pathname, name: `${userInfo.realName}` },
+        ]}
+      />
       <Card>
         <Descriptions title='该用户详细信息'>
           <Descriptions.Item label='姓名'>

@@ -108,7 +108,7 @@ const ThingAdd = ({ addThing, dispatch, history }) => {
         formData.append('endTime', addThing.endTime._d);
       }
       formData.append('tagId', addThing.tagId);
-      formData.append('userTeam', addThing.userTeam);
+    //  formData.append('userTeam', addThing.userTeam);
       formData.append('teamId', addThing.teamId);
      formData.append('receiverIds', addThing.receiverIds);
       

@@ -6,7 +6,10 @@ import style from "./roleList.css";
 const RoleList = props => {
   const [roleList, setRoleList] = useState([]);
   const [ifShowModal, setIfShowModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
+  const [updateRecord, setUpdateRecord] = useState("");
+  const [updateRoleName, setUpdateRoleName] = useState("");
 
   const getRoles = () => {
     http
@@ -32,6 +35,25 @@ const RoleList = props => {
           getRoles();
           setIfShowModal(false);
           message.success("添加成功!");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const handleOk1 = e => {
+    http
+      .post("/role/update", { 
+      /*  role: updateRecord*/
+        id : updateRecord.id,
+        roleName: updateRoleName 
+      })
+      .then(res => {
+        if (res.data.code === 0) {
+          getRoles();
+          setShowUpdateModal(false);
+          message.success("修改成功!");
         }
       })
       .catch(err => {
@@ -79,6 +101,15 @@ const RoleList = props => {
                   }}>
                   管理
                 </Button>
+                <Button
+                  type='link'
+                  onClick={() => {
+                    setUpdateRecord(role);
+                    console.log(role);
+                    setShowUpdateModal(true);
+                  }}>
+                  改名
+                </Button>
                 <Popconfirm title="确定要删除吗?" 
               onConfirm={() =>{ 
                 handleDelete(role.id);
@@ -105,6 +136,7 @@ const RoleList = props => {
         })}
       </div>
       <Modal
+      destroyOnClose
         title='添加角色'
         visible={ifShowModal}
         onOk={handleOk}
@@ -114,6 +146,22 @@ const RoleList = props => {
           label='角色名'
           onChange={e => {
             setNewRoleName(e.target.value);
+          }}
+        />
+      </Modal>
+      <Modal
+      destroyOnClose
+        title='更改角色名'
+        visible={showUpdateModal}
+        onOk={handleOk1}
+        onCancel={() => setShowUpdateModal(false)}>
+        <Input
+          defaultValue={updateRecord.roleName}
+          onChange={e => {
+            setUpdateRoleName(e.target.value);
+            console.log(updateRoleName);
+            updateRecord.roleName = e.target.value;
+            console.log(updateRecord);
           }}
         />
       </Modal>

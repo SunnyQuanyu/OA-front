@@ -365,7 +365,7 @@ const { Option } = Select;
           <Col span={8}>
                  <Form.Item name="startTime" label="开始时间" {...config}>
                     <DatePicker 
-                    showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }} 
+                    defaultValue={ moment('00:00:00', 'HH:mm:ss') }
                     format="YYYY-MM-DD" 
                   
                     />
@@ -374,7 +374,8 @@ const { Option } = Select;
                  <Col span={8}>
                  <Form.Item name="endTime" label="结束时间" {...config}>
                     <DatePicker 
-                    showTime={{ defaultValue: moment('23:59:59', 'HH:mm:ss') }} 
+                   // showTime={{ defaultValue: moment('23:59:59', 'HH:mm:ss') }} 
+                    defaultValue={ moment('23:59:59', 'HH:mm:ss') }
                     format="YYYY-MM-DD" />
                  </Form.Item>
                  </Col>

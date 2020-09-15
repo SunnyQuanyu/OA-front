@@ -4,7 +4,7 @@ import { Form, Input, Button, Card, message, Spin, Checkbox, Modal, Row, Col, To
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import style from './login.css';
 import http from '../utils/axios';
-import { getToken, setToken } from '../utils/authc';
+import { getToken, setToken, clearToken } from '../utils/authc';
 
 class Login extends Component {
   
@@ -16,9 +16,8 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    let token = getToken();
-    if (token) {
-      this.login(token);
+    if(getToken().number != null){
+      this.setState({checked : true});
     }
   }
 
@@ -38,8 +37,15 @@ class Login extends Component {
       .then((res) => {
         if (res.data.code === 0) {
           message.success('登录成功');
-          setToken(values);
-          this.saveUserInfoToDva(res.data.data);
+          if(this.state.checked){
+            setToken(values);
+            this.saveUserInfoToDva(res.data.data);
+            this.setState({saveNumber : values.number});
+          }else{
+            clearToken();
+          }
+         // setToken(values);
+         // this.saveUserInfoToDva(res.data.data);
           if (this.getParams('state') === 'bind') {
             this.props.history.push(`/u/wxbind${this.props.location.search}`);
           } else {
@@ -63,17 +69,18 @@ class Login extends Component {
   onChange = e => {
      console.log(`checked = ${e.target.checked}`);
     //  checked = e.target.checked;
-      this.setState({checked : e.target.checked})
+      this.setState({checked : e.target.checked});
+      console.log(this.state.defaultChecked)
   };
 
   saveUserInfoToDva = (value) => {
-    if(this.state.checked == true){
+    
         this.props.dispatch({
           type: 'userInfo/save',
           isLogined: true,
           data: value,
         });
-    }
+    
   };
 
  handleOk = e => {
@@ -101,15 +108,16 @@ class Login extends Component {
  }
   };
 
-  sendEmail = e => {
+  sendEmail = () => {
     http
       .post('/user/sendEmail', {
-       data: this.state.email
+       email: this.state.email
       })
       .then(res => {
         if (res.data.code === 0) {
           message.warning("发送成功！");
           this.setState({backCheckCode : res.data.data})
+          
         }
       })
       .catch(err => {
@@ -172,14 +180,17 @@ class Login extends Component {
                   <Input 
                   style={{ width: 190 }}
                 //  defaultValue={userInfo.email}
-                  onChange={e => this.setState({email : e.target.value})}
+                  onChange={e => {
+                    this.setState({email : e.target.value});
+                    console.log(e.target.value);
+                }}
                   />
                   
                 </Form.Item>
 
                
                 <Button style={{ margin: '0 8px' }}
-                onClick={() => this.sendEmail}
+                onClick={this.sendEmail}
                 >发送验证码</Button>
                
                 </Form.Item>
@@ -204,13 +215,17 @@ class Login extends Component {
           <Form
             name='normal_login'
             className='login-form'
-            initialValues={{ remember: true }}
+            initialValues={{ 
+              remember: true , 
+              number: getToken().number,
+              password: getToken().password}}
             onFinish={this.onFinish}>
             <Form.Item
               name='number'
               rules={[{ required: true, message: '请输入学号/工号!' }]}>
               <Input
                 prefix={<UserOutlined className='site-form-item-icon' />}
+              //  defaultValue={getToken().number}
                 placeholder='学号/工号'
               />
             </Form.Item>
@@ -220,12 +235,15 @@ class Login extends Component {
               <Input
                 prefix={<LockOutlined className='site-form-item-icon' />}
                 type='password'
+              //  defaultValue={getToken().password}
                 placeholder='密码'
               />
             </Form.Item>
             <Form.Item>
             <Checkbox 
+            checked={this.state.checked}
             onChange={this.onChange}
+            indeterminate={false}
             >
             记住密码
             </Checkbox>

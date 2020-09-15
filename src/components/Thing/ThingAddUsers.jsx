@@ -28,7 +28,7 @@ placeholder="选择接收小组/人"
 rows={4}
 allowClear
 onChange
-value = {addThing.teamName+" "+(addThing.receiverIds||[]).map(item =>{return item.realName})}
+value = {addThing.teamName+" "+(addThing.receiverNames||[]).map(item =>{return item.realName})}
 />
 
 
@@ -82,9 +82,8 @@ value = {addThing.teamName+" "+(addThing.receiverIds||[]).map(item =>{return ite
           getSelectRows={names =>{
             saveThingChange(names, 'receiverNames');
             console.log(names);
-          }
-
-          }
+            console.log(addThing.receiverNames)
+          }}
           saveState={true}
         />
       

@@ -10,7 +10,7 @@ const initData = {
   startTime: null, // moment._d can be cast to Date
   endTime: null,
   tagId: null,
-  userTeam: true,
+//  userTeam: true,
   teamId: null,
   receiverIds: [],
   files: [],

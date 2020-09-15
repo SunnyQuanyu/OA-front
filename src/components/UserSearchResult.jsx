@@ -80,7 +80,7 @@ const UserSearchResult = ({ extraColumns, tableSelectable, getSelectIds,getSelec
       setSelectedRowKeys(selectedRowKeys);
       setSelectedRows(selectedRows);
       getSelectIds(selectedRowKeys);
-    //  getSelectRows(selectedRows);
+      getSelectRows(selectedRows);
       console.log(selectedRows)
     }
   };
@@ -148,6 +148,7 @@ const UserSearchResult = ({ extraColumns, tableSelectable, getSelectIds,getSelec
               onClick={() => {
                 setSelectedRowKeys([]);
                 getSelectIds([]);
+                getSelectRows({});
               }}
               type='link'
               style={{ float: 'right' }}>
@@ -188,7 +189,7 @@ UserSearchResult.propTypes = {
   extraColumns: PropTypes.array,
   tableSelectable: PropTypes.bool,
   getSelectIds: PropTypes.func,
-//  getSelectRows: PropTypes.func
+  getSelectRows: PropTypes.func
 };
 
 UserSearchResult.defaultProps = {
