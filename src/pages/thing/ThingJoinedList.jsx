@@ -178,7 +178,9 @@ const ThingJoinedList = ({ history }) => {
         data: data,
       })
       .then((res) => {
+        console.log(res);
         if (res.data.code === 0) {
+        //  history.push(`/login`)
           setPageTotal(res.data.data.total);
           console.log(res.data.data.records);
         /*  const tempData = res.data.data.records.map((record) => ({
@@ -190,8 +192,10 @@ const ThingJoinedList = ({ history }) => {
           }));*/
           setDataSource(res.data.data.records);
          // console.log(tempData)
-          setLoading(false);
-         
+          setLoading(false);      
+        }
+        if (res.data.data === null){
+          history.push(`/login`)
         }
       })
       .catch((err) => {
